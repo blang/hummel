@@ -27,7 +27,7 @@ The client initializes the filetransfer using a selected available slave and ver
 
 `Client ---> Slave`: Get [hash].zip
 
-`Client ---> Master`: Send list of hashes (master keeps track of clients)
+`Client ---> Master`: Send list of hashes (master keeps track of clients  hashes for statistical usage)
 
 ### New Slave
 
@@ -52,21 +52,53 @@ Headers:
 
 #### Slave Introduction / Announcement
 
-A slave sends a list of stored hashes of his files. Also used to introduce a new slave with empty hashlist
+A slave sends a list of stored hashes of his files. Also used to introduce a new slave with empty hashlist.
 
-POST http://master/slave/hashlist
+`POST http://master/slave/hashlist`
 
 Headers:
 - X-HUMMEL-TOKEN: Slavetoken
+- X-HUMMEL-SLAVE: http://slave:9000
 
 Request-Body: 
 ```json
-{
+[
+  "5a3ade42a900439691ebc22013660cae",
+  "b493c2e1813f49fb0ef0d9c1388f97c0",
+  "4d64f04401ff74fd62f91b9300075c64"
+]
+```
 
+Response Codes:
+- 200: Ack
+- 401: Unauthorized
+
+#### Slave fetches hashlist of master
+
+A slave requests a list of all hashes of the repository.
+
+`GET http://master/slave/hashlist`
+
+Headers:
+- X-HUMMEL-TOKEN: Slavetoken
+- X-HUMMEL-SLAVE: http://slave:9000
+
+Response-Body:
+```json
+{
+  "slaves": [
+    "http://slave1",
+    "http://slave2",
+    "http://slave3"
+  ],
+  "hashlist": [
+    "5a3ade42a900439691ebc22013660cae",
+    "b493c2e1813f49fb0ef0d9c1388f97c0",
+    "4d64f04401ff74fd62f91b9300075c64"
+  ]
 }
 ```
 
-#### 
 
 ## Problems
 
